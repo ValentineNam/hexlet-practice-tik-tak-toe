@@ -1,0 +1,29 @@
+:root {
+  --accent: #3273dc;
+  --accent-bg: #fff;
+  --accent-border: #3273dc;
+  --border: #eaeaea;
+  --social-bg: #f8f8f8;
+  --text-h: #111;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.counter {
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+  margin-bottom: 24px;
+}
+
+.counter:hover {
+  border-color: var(--accent-border);
+}
+
+.counter:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

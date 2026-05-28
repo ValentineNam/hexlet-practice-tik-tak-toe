@@ -1,0 +1,161 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+}
+
+.login-container, .register-container, .home-container, .game-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.login-container h2, .register-container h2, .home-container h1, .game-container h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.login-container form, .register-container form, .home-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.error {
+  color: #dc3545;
+  background-color: #f8d7da;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.success {
+  color: #28a745;
+  background-color: #d4edda;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.games-list {
+  list-style: none;
+  padding: 0;
+}
+
+.games-list li {
+  background: white;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 70px);
+  margin: 20px auto;
+  width: max-content;
+  border: 3px solid #333;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.board-cell {
+  width: 70px;
+  height: 70px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  border: 1px solid #dee2e6;
+  transition: background-color 0.2s;
+}
+
+.board-cell.obstacle {
+  background-color: #ff6b6b;
+  color: white;
+  cursor: not-allowed;
+}
+
+.board-cell.clickable {
+  background-color: #e3f2fd;
+  cursor: pointer;
+}
+
+.board-cell.clickable:hover {
+  background-color: #4dabf7;
+}
+
+.board-cell.corner-highlight {
+  background-color: #d8f5a2;
+}
+
+.board-cell.corner-highlight:hover {
+  background-color: #b8e980;
+}
+
+.score {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.game-info {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.game-controls {
+  text-align: center;
+  margin-top: 20px;
+}
