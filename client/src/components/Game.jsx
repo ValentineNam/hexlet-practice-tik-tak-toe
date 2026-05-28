@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const CORNERS = [[0, 0], [0, 6], [6, 0], [6, 6]];
-
 const Game = ({ user: initialUser }) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -69,6 +67,7 @@ const Game = ({ user: initialUser }) => {
     return <div className="loading">Loading game...</div>;
   }
 
+  const boardSize = game.boardSize || 7;
   const moves = game.Moves || [];
   const player1Name = game.player1?.username || 'Waiting for player...';
   const player2Name = game.player2 ? game.player2.username : 'Waiting for player...';
@@ -78,15 +77,23 @@ const Game = ({ user: initialUser }) => {
   const isFirstMove = game.firstMove && moves.length === 0;
 
   // Build board state from moves
-  const board = Array(7).fill(null).map(() => Array(7).fill(null));
+  const board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
   moves.forEach(move => {
     board[move.row][move.column] = move.symbol;
   });
 
+  // Get corners dynamically based on board size
+  const CORNERS = [
+    [0, 0], 
+    [0, boardSize - 1], 
+    [boardSize - 1, 0], 
+    [boardSize - 1, boardSize - 1]
+  ];
+
   // Flatten the board into a single array for rendering
   const cells = [];
-  for (let row = 0; row < 7; row++) {
-    for (let col = 0; col < 7; col++) {
+  for (let row = 0; row < boardSize; row++) {
+    for (let col = 0; col < boardSize; col++) {
       const isObstacle = game.obstacles.some(obs => obs[0] === row && obs[1] === col);
       const symbol = board[row][col];
       
@@ -109,7 +116,7 @@ const Game = ({ user: initialUser }) => {
 
   return (
     <div className="game-container">
-      <h1>Tic Tac Toe 7x7</h1>
+      <h1>Tic Tac Toe {boardSize}x{boardSize}</h1>
       {error && <div className="error">{error}</div>}
       <div className="game-info">
         <div><strong>Player 1 (X):</strong> {player1Name} <span className="score">(Score: {game.player1Score || 0})</span></div>
@@ -121,7 +128,12 @@ const Game = ({ user: initialUser }) => {
         )}
         <div><strong>Current Turn:</strong> {isUserTurn ? 'Your turn' : game.currentPlayer === 1 ? player1Name : player2Name}</div>
       </div>
-      <div className="board-grid">
+      <div 
+        className="board-grid" 
+        style={{
+          gridTemplateColumns: `repeat(${boardSize}, 70px)`
+        }}
+      >
         {cells}
       </div>
       <div className="game-controls">

@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // Helper function to count all unique 3+ in a row combinations on the board
-function calculateTotalScore(board, symbol) {
+function calculateTotalScore(board, symbol, boardSize) {
   const directions = [
     [0, 1],   // horizontal
     [1, 0],   // vertical
@@ -21,21 +21,21 @@ function calculateTotalScore(board, symbol) {
 
   let totalScore = 0;
   
-  for (let row = 0; row < 7; row++) {
-    for (let col = 0; col < 7; col++) {
+  for (let row = 0; row < boardSize; row++) {
+    for (let col = 0; col < boardSize; col++) {
       if (board[row][col] !== symbol) continue;
       
       for (const [dr, dc] of directions) {
         // Check only in positive direction to avoid counting same line multiple times
         let r = row - dr, c = col - dc;
-        const hasBefore = r >= 0 && r < 7 && c >= 0 && c < 7 && board[r][c] === symbol;
+        const hasBefore = r >= 0 && r < boardSize && c >= 0 && c < boardSize && board[r][c] === symbol;
         if (hasBefore) continue; // Already counted as part of another line
         
         // Count the full length of this line
         let count = 1;
         r = row + dr;
         c = col + dc;
-        while (r >= 0 && r < 7 && c >= 0 && c < 7 && board[r][c] === symbol) {
+        while (r >= 0 && r < boardSize && c >= 0 && c < boardSize && board[r][c] === symbol) {
           count++;
           r += dr;
           c += dc;
@@ -53,9 +53,9 @@ function calculateTotalScore(board, symbol) {
 }
 
 // Check if any moves are available
-function hasAvailableMoves(board, obstacles) {
-  for (let row = 0; row < 7; row++) {
-    for (let col = 0; col < 7; col++) {
+function hasAvailableMoves(board, obstacles, boardSize) {
+  for (let row = 0; row < boardSize; row++) {
+    for (let col = 0; col < boardSize; col++) {
       const isObstacle = obstacles.some(obs => obs[0] === row && obs[1] === col);
       if (!isObstacle && !board[row][col]) {
         return true;
@@ -130,15 +130,17 @@ app.post('/login', async (req, res) => {
 // Game routes
 app.post('/games', async (req, res) => {
   try {
-    const { player1Id, obstacleCount = 3 } = req.body;
-    // Generate obstacles only in inner area (not on edges - rows/cols 1-5)
+    const { player1Id, boardSize = 7, obstacleCount = 3 } = req.body;
+    
+    // Generate obstacles only in inner area (edges excluded)
     const obstacles = [];
     const positions = [];
-    for (let i = 1; i < 6; i++) {  // Skip edges (0 and 6)
-      for (let j = 1; j < 6; j++) {
+    for (let i = 1; i < boardSize - 1; i++) {  // Skip edges (0 and boardSize-1)
+      for (let j = 1; j < boardSize - 1; j++) {
         positions.push([i, j]);
       }
     }
+    
     // Shuffle and pick obstacleCount positions
     for (let i = positions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -150,6 +152,7 @@ app.post('/games', async (req, res) => {
 
     const game = await Game.create({
       player1Id,
+      boardSize,
       obstacleCount,
       obstacles,
       status: 'waiting'
@@ -230,6 +233,7 @@ app.post('/games/:id/moves', async (req, res) => {
       return res.status(400).json({ error: 'Game is not active' });
     }
     
+    const boardSize = game.boardSize || 7;
     const playerNumber = game.currentPlayer === 1 ? 1 : 2;
     
     // Check if it's the player's turn
@@ -256,9 +260,9 @@ app.post('/games/:id/moves', async (req, res) => {
     
     if (isFirstMove && symbol === 'X') {
       const isCorner = (row === 0 && column === 0) || 
-                       (row === 0 && column === 6) || 
-                       (row === 6 && column === 0) || 
-                       (row === 6 && column === 6);
+                       (row === 0 && column === boardSize - 1) || 
+                       (row === boardSize - 1 && column === 0) || 
+                       (row === boardSize - 1 && column === boardSize - 1);
       if (!isCorner) {
         return res.status(400).json({ error: 'First move must be in a corner' });
       }
@@ -266,7 +270,7 @@ app.post('/games/:id/moves', async (req, res) => {
     
     // Get all moves to build board
     const allMoves = await Move.findAll({ where: { gameId: id } });
-    const board = Array(7).fill(null).map(() => Array(7).fill(null));
+    const board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
     allMoves.forEach(move => {
       board[move.row][move.column] = move.symbol;
     });
@@ -278,11 +282,11 @@ app.post('/games/:id/moves', async (req, res) => {
     board[row][column] = symbol;
 
     // Calculate TOTAL scores for both players (unique lines only)
-    const player1Score = calculateTotalScore(board, 'X');
-    const player2Score = calculateTotalScore(board, 'O');
+    const player1Score = calculateTotalScore(board, 'X', boardSize);
+    const player2Score = calculateTotalScore(board, 'O', boardSize);
 
     // Check if game is over (no available moves)
-    const gameOver = !hasAvailableMoves(board, game.obstacles);
+    const gameOver = !hasAvailableMoves(board, game.obstacles, boardSize);
 
     // Update game scores and check for game over
     const updateData = { 

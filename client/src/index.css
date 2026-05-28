@@ -41,7 +41,7 @@ label {
   font-weight: bold;
 }
 
-input {
+input, select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -96,7 +96,6 @@ button:hover {
 
 .board-grid {
   display: grid;
-  grid-template-columns: repeat(7, 70px);
   margin: 20px auto;
   width: max-content;
   border: 3px solid #333;
