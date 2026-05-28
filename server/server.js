@@ -52,6 +52,19 @@ function calculateTotalScore(board, symbol) {
   return totalScore;
 }
 
+// Check if any moves are available
+function hasAvailableMoves(board, obstacles) {
+  for (let row = 0; row < 7; row++) {
+    for (let col = 0; col < 7; col++) {
+      const isObstacle = obstacles.some(obs => obs[0] === row && obs[1] === col);
+      if (!isObstacle && !board[row][col]) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 // Test database connection
 sequelize.authenticate()
   .then(() => console.log('Database connected...'))
@@ -268,13 +281,27 @@ app.post('/games/:id/moves', async (req, res) => {
     const player1Score = calculateTotalScore(board, 'X');
     const player2Score = calculateTotalScore(board, 'O');
 
-    // Update game scores and reset firstMove
-    await game.update({ 
+    // Check if game is over (no available moves)
+    const gameOver = !hasAvailableMoves(board, game.obstacles);
+
+    // Update game scores and check for game over
+    const updateData = { 
       currentPlayer: game.currentPlayer === 1 ? 2 : 1,
       firstMove: false,
       player1Score,
       player2Score
-    });
+    };
+
+    if (gameOver) {
+      updateData.status = 'finished';
+      if (player1Score > player2Score) {
+        updateData.winnerId = game.player1Id;
+      } else if (player2Score > player1Score) {
+        updateData.winnerId = game.player2Id;
+      }
+    }
+
+    await game.update(updateData);
 
     // Return updated game state
     const updatedGame = await Game.findByPk(id, {

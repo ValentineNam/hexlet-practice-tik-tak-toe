@@ -116,6 +116,9 @@ const Game = ({ user: initialUser }) => {
         <div><strong>Player 2 (O):</strong> {player2Name} <span className="score">(Score: {game.player2Score || 0})</span></div>
         <div><strong>Status:</strong> {game.status.charAt(0).toUpperCase() + game.status.slice(1)}</div>
         <div><strong>Obstacles:</strong> {game.obstacleCount}</div>
+        {game.status === 'finished' && (
+          <div><strong>Winner:</strong> {game.winnerId === user.id ? 'You won!' : game.winnerId ? 'Other player won' : 'Draw'}</div>
+        )}
         <div><strong>Current Turn:</strong> {isUserTurn ? 'Your turn' : game.currentPlayer === 1 ? player1Name : player2Name}</div>
       </div>
       <div className="board-grid">
