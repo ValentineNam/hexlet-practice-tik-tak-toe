@@ -149,9 +149,47 @@ button:hover {
   padding: 15px;
   border-radius: 4px;
   margin-bottom: 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.game-status-row {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.game-players-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px 0;
+  font-size: 18px;
+}
+
+.game-score-row {
+  display: flex;
+  justify-content: center;
   gap: 10px;
+  padding: 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.score-value {
+  min-width: 40px;
+  text-align: center;
+}
+
+.score-separator {
+  margin: 0 5px;
+}
+
+.game-winner-row {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+  color: #1a73e8;
 }
 
 .game-controls {

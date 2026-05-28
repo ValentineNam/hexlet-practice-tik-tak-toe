@@ -119,14 +119,24 @@ const Game = ({ user: initialUser }) => {
       <h1>Tic Tac Toe {boardSize}x{boardSize}</h1>
       {error && <div className="error">{error}</div>}
       <div className="game-info">
-        <div><strong>Player 1 (X):</strong> {player1Name} <span className="score">(Score: {game.player1Score || 0})</span></div>
-        <div><strong>Player 2 (O):</strong> {player2Name} <span className="score">(Score: {game.player2Score || 0})</span></div>
-        <div><strong>Status:</strong> {game.status.charAt(0).toUpperCase() + game.status.slice(1)}</div>
-        <div><strong>Obstacles:</strong> {game.obstacleCount}</div>
+        <div className="game-status-row">
+          <span><strong>Status:</strong> {game.status.charAt(0).toUpperCase() + game.status.slice(1)}</span>
+          <span className="separator">|</span>
+          <span><strong>Obstacles:</strong> {game.obstacleCount}</span>
+        </div>
+        <div className="game-players-row">
+          <span><strong>X:</strong> {player1Name}</span>
+          <span><strong>vs.</strong></span>
+          <span><strong>O:</strong> {player2Name}</span>
+        </div>
+        <div className="game-score-row">
+          <span className="score-value">{game.player1Score || 0}</span>
+          <span className="score-separator">:</span>
+          <span className="score-value">{game.player2Score || 0}</span>
+        </div>
         {game.status === 'finished' && (
-          <div><strong>Winner:</strong> {game.winnerId === user.id ? 'You won!' : game.winnerId ? 'Other player won' : 'Draw'}</div>
+          <div className="game-winner-row"><strong>Winner:</strong> {game.winnerId === user.id ? 'You won!' : game.winnerId ? 'Other player won' : 'Draw'}</div>
         )}
-        <div><strong>Current Turn:</strong> {isUserTurn ? 'Your turn' : game.currentPlayer === 1 ? player1Name : player2Name}</div>
       </div>
       <div 
         className="board-grid" 
