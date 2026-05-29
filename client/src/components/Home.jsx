@@ -86,8 +86,7 @@ const Home = ({ user }) => {
       )}
       <h2>Create New Game</h2>
       <form onSubmit={handleCreateGame} className="create-game-form">
-        <div className="create-game-columns">
-          <div className="create-game-left">
+          <div className="create-game-grid">
             <div className="form-field">
               <label>Board Size (5-7):</label>
               <select value={boardSize} onChange={(e) => {
@@ -101,20 +100,8 @@ const Home = ({ user }) => {
               </select>
             </div>
             <div className="form-field">
-              <label>Number of Obstacles (0-{maxObstacles}):</label>
-              <input
-                type="number"
-                value={obstacleCount}
-                onChange={(e) => setObstacleCount(Math.min(Math.max(parseInt(e.target.value) || 0, 0), maxObstacles))}
-                min="0"
-                max={maxObstacles}
-              />
-            </div>
-          </div>
-          <div className="create-game-right">
-            <div className="form-field">
               <label>Opponent:</label>
-              <div className="switch-container">
+              <div className="switch-control">
                 <span className={`switch-label ${opponentType === 'player' ? 'active' : ''}`}>Player</span>
                 <label className="switch">
                   <input
@@ -128,6 +115,16 @@ const Home = ({ user }) => {
               </div>
             </div>
             <div className="form-field">
+              <label>Number of Obstacles (0-{maxObstacles}):</label>
+              <input
+                type="number"
+                value={obstacleCount}
+                onChange={(e) => setObstacleCount(Math.min(Math.max(parseInt(e.target.value) || 0, 0), maxObstacles))}
+                min="0"
+                max={maxObstacles}
+              />
+            </div>
+            <div className="form-field">
               <label>Difficulty:</label>
               <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
                 <option value="easy">Easy</option>
@@ -136,11 +133,10 @@ const Home = ({ user }) => {
               </select>
             </div>
           </div>
-        </div>
-        <div className="create-game-submit">
-          <button type="submit">Create Game</button>
-        </div>
-      </form>
+          <div className="create-game-submit">
+            <button type="submit">Create Game</button>
+          </div>
+        </form>
     </div>
   );
 };
