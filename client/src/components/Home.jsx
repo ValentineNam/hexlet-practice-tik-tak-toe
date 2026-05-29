@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Home = ({ user }) => {
   const [games, setGames] = useState([]);
@@ -106,7 +106,6 @@ const Home = ({ user }) => {
         </div>
         <button type="submit">Create Game</button>
       </form>
-      <p><Link to="/login">Logout</Link></p>
     </div>
   );
 };
