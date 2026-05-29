@@ -6,6 +6,8 @@ const Home = ({ user }) => {
   const [games, setGames] = useState([]);
   const [boardSize, setBoardSize] = useState(7);
   const [obstacleCount, setObstacleCount] = useState(3);
+  const [opponentType, setOpponentType] = useState('player');
+  const [difficulty, setDifficulty] = useState('medium');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -33,7 +35,9 @@ const Home = ({ user }) => {
       const response = await axios.post('http://localhost:3001/games', {
         player1Id: user.id,
         boardSize,
-        obstacleCount
+        obstacleCount,
+        opponentType,
+        difficulty
       });
       setSuccess('Game created! Redirecting...');
       setTimeout(() => {
@@ -81,30 +85,61 @@ const Home = ({ user }) => {
         </ul>
       )}
       <h2>Create New Game</h2>
-      <form onSubmit={handleCreateGame}>
-        <div>
-          <label>Board Size (5-7):</label>
-          <select value={boardSize} onChange={(e) => {
-            const newSize = parseInt(e.target.value);
-            setBoardSize(newSize);
-            setObstacleCount(Math.min(obstacleCount, Math.max(0, newSize - 2)));
-          }}>
-            <option value="5">5x5</option>
-            <option value="6">6x6</option>
-            <option value="7">7x7</option>
-          </select>
+      <form onSubmit={handleCreateGame} className="create-game-form">
+        <div className="create-game-columns">
+          <div className="create-game-left">
+            <div className="form-field">
+              <label>Board Size (5-7):</label>
+              <select value={boardSize} onChange={(e) => {
+                const newSize = parseInt(e.target.value);
+                setBoardSize(newSize);
+                setObstacleCount(Math.min(obstacleCount, Math.max(0, newSize - 2)));
+              }}>
+                <option value="5">5x5</option>
+                <option value="6">6x6</option>
+                <option value="7">7x7</option>
+              </select>
+            </div>
+            <div className="form-field">
+              <label>Number of Obstacles (0-{maxObstacles}):</label>
+              <input
+                type="number"
+                value={obstacleCount}
+                onChange={(e) => setObstacleCount(Math.min(Math.max(parseInt(e.target.value) || 0, 0), maxObstacles))}
+                min="0"
+                max={maxObstacles}
+              />
+            </div>
+          </div>
+          <div className="create-game-right">
+            <div className="form-field">
+              <label>Opponent:</label>
+              <div className="switch-container">
+                <span className={`switch-label ${opponentType === 'player' ? 'active' : ''}`}>Player</span>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    checked={opponentType === 'computer'}
+                    onChange={(e) => setOpponentType(e.target.checked ? 'computer' : 'player')}
+                  />
+                  <span className="slider"></span>
+                </label>
+                <span className={`switch-label ${opponentType === 'computer' ? 'active' : ''}`}>Computer</span>
+              </div>
+            </div>
+            <div className="form-field">
+              <label>Difficulty:</label>
+              <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div>
-          <label>Number of Obstacles (0-{maxObstacles}):</label>
-          <input
-            type="number"
-            value={obstacleCount}
-            onChange={(e) => setObstacleCount(Math.min(Math.max(parseInt(e.target.value) || 0, 0), maxObstacles))}
-            min="0"
-            max={maxObstacles}
-          />
+        <div className="create-game-submit">
+          <button type="submit">Create Game</button>
         </div>
-        <button type="submit">Create Game</button>
       </form>
     </div>
   );
