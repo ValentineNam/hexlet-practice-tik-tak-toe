@@ -3,6 +3,7 @@
 ## Commands
 - Server: `cd server && node server.js` (starts on port 3001)
 - Client: `cd client && npm run dev` (starts on port 5173)
+- Lint: `cd client && npm run lint`
 
 ## Tech Stack
 - Server: Node.js, Express, Sequelize, SQLite, bcryptjs

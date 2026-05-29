@@ -1,94 +1,126 @@
-# Tic-Tac-Toe Extended Game
+# Tic Tac Toe Extended
 
-Extended Tic-Tac-Toe game with 7x7 field and obstacles. Each combination of three in a row gives points.
+Расширенная игра в крестики-нолики с 7x7 полем, препятствиями и системой очков.
 
-## Features
+## Особенности
 
-- 7x7 game board
-- Random obstacles that prevent placing pieces
-- Multiplayer real-time gameplay
-- Score tracking based on combinations
-- User authentication and registration
-- Game history and statistics
+- Игровое поле 7x7
+- Случайные препятствия (нельзя размещать фигуры)
+- Игра по сети в реальном времени
+- Подсчет очков за комбинации из 3+ в ряд
+- Регистрация и авторизация игроков
+- История игр и статистика
 
-## Tech Stack
+## Технологический стек
 
-- Backend: Node.js, Express, Sequelize
-- Database: SQLite
-- Frontend: [To be added]
-- Real-time: [To be added]
+- **Бэкенд**: Node.js, Express, Sequelize, SQLite
+- **Фронтенд**: React, Vite, Axios, React Router
 
-## Setup Instructions
+## Требования
 
-### Prerequisites
+- Node.js (версия 14 или выше)
+- npm или yarn
 
-- Node.js (v14 or higher)
-- npm or yarn
+## Установка и запуск
 
-### Installation
+### 1. Клонирование репозитория
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd <project-directory>
-Install dependencies:
+```bash
+git clone <repository-url>
+cd hexlet-practice-tik-tak-toe
+```
 
-bash
+### 2. Установка зависимостей
+
+#### Сервер
+```bash
+cd server
 npm install
-Set up environment variables:
+```
 
-bash
-cp .env.example .env
-# Edit .env file with your configuration
-Start the development server:
+#### Клиент
+```bash
+cd ../client
+npm install
+```
 
-bash
+### 3. Запуск приложения
+
+#### Сервер (терминал 1)
+```bash
+cd server
+node server.js
+```
+Сервер запустится на порту 3001.
+
+#### Клиент (термитал 2)
+```bash
+cd client
 npm run dev
-Project Structure
+```
+Клиент запустится на порту 5173.
+
+### 4. Открытие в браузере
+
+Перейдите по адресу: http://localhost:5173
+
+## Структура проекта
+
+```
 hexlet-practice-tik-tak-toe/
-├── server/
-│   ├── config/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   └── server.js
-├── client/                 # To be implemented
-├── .env                    # Environment variables
-├── .gitignore
-├── README.md
-└── package.json
-API Endpoints
-Authentication
-POST /register - Register a new player
-POST /login - Login a player
-Games
-POST /games - Create a new game
-GET /games - Get active games
-POST /games/:id/join - Join a game
-GET /games/:id - Get game details
-POST /games/:id/moves - Make a move
-Game Rules
-7x7 grid with random obstacles
-Players take turns placing X and O
-Each line of 3 or more symbols gives points
-First player gets X, second gets O
-Game ends when board is full
-Winner determined by highest score
-Database Schema
-[Will be updated with ER diagram and detailed schema]
+├── server/              # Бэкенд
+│   ├── config/          # Конфигурация БД
+│   ├── controllers/     # Контроллеры
+│   ├── models/          # Модели Sequelize
+│   ├── routes/          # Маршруты
+│   └── server.js        # Главный файл сервера
+├── client/              # Фронтенд
+│   ├── src/
+│   │   ├── components/  # React компоненты
+│   │   ├── App.jsx      # Главный компонент
+│   │   └── main.jsx     # Точка входа
+│   └── index.html
+└── README.md
+```
 
-Development
-Running the server
-bash
-npm run dev
-Running tests
-bash
-npm test
-Contributing
-[To be added]
+## API эндпоинты
 
-License
-[To be added]
+### Авторизация
+- `POST /register` — Регистрация нового игрока
+- `POST /login` — Вход в игру
 
-Notes
-This is a work-in-progress implementation. More features will be added as development continues.
+### Игры
+- `POST /games` — Создание новой игры
+- `GET /games` — Получение списка активных игр
+- `POST /games/:id/join` — Присоединение к игре
+- `GET /games/:id` — Получение деталей игры
+- `POST /games/:id/moves` — Сделать ход
+
+## Предустановленные пользователи
+
+При первом запуске автоматически создаются тестовые учетки:
+- **playerOne** / **Qazxdr777@**
+- **testerOne** / **Qazxdr777@**
+
+## Правила игры
+
+1. Игровое поле 7x7 с случайно размещенными препятствиями
+2. Игроки ходят по очереди (X и O)
+3. Первый ход X обязан быть в угол
+4. За каждую комбинацию из 3+ в ряд начисляются очки
+5. Игра заканчивается когда на поле больше нет свободных клеток
+6. Победитель — игрок с большим количеством очков
+
+## Разработка
+
+### Проверка кода (lint)
+```bash
+cd client
+npm run lint
+```
+
+### Сборка клиента
+```bash
+cd client
+npm run build
+```
