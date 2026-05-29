@@ -85,7 +85,7 @@ const Home = ({ user }) => {
         </ul>
       )}
       <h2>Create New Game</h2>
-      <form onSubmit={handleCreateGame} className="create-game-form">
+<form onSubmit={handleCreateGame} className="create-game-form">
           <div className="create-game-grid">
             <div className="form-field">
               <label>Board Size (5-7):</label>

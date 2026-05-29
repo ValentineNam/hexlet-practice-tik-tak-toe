@@ -15,9 +15,9 @@ const Login = () => {
         username,
         password
       });
-      localStorage.setItem('token', response.data.id); // Simplified token (user id)
+      localStorage.setItem('token', response.data.id);
       localStorage.setItem('user', JSON.stringify({ id: response.data.id, username: response.data.username }));
-      navigate('/');
+      window.location.href = '/';
     } catch (err) {
       setError(err.response.data.error || 'Login failed');
     }
