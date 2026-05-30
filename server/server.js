@@ -10,13 +10,13 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Helper function to count all unique 3+ in a row combinations on the board
+// Вспомогательная функция для подсчета очков на доске
 function calculateTotalScore(board, symbol, boardSize) {
   const directions = [
-    [0, 1],   // horizontal
-    [1, 0],   // vertical
-    [1, 1],   // diagonal right
-    [1, -1]   // diagonal left
+    [0, 1],   // горизонталь
+    [1, 0],   // вертикаль
+    [1, 1],   // диагональ в направление вниз-вправо
+    [1, -1]   // диагональ в направление вниз-влево
   ];
 
   let totalScore = 0;
@@ -26,12 +26,12 @@ function calculateTotalScore(board, symbol, boardSize) {
       if (board[row][col] !== symbol) continue;
       
       for (const [dr, dc] of directions) {
-        // Check only in positive direction to avoid counting same line multiple times
+        // Считаем только линии, которые начинаются с текущей клетки, чтобы избежать двойного подсчета
         let r = row - dr, c = col - dc;
         const hasBefore = r >= 0 && r < boardSize && c >= 0 && c < boardSize && board[r][c] === symbol;
-        if (hasBefore) continue; // Already counted as part of another line
+        if (hasBefore) continue;
         
-        // Count the full length of this line
+        // Считаем длину линии в данном направлении
         let count = 1;
         r = row + dr;
         c = col + dc;
@@ -41,7 +41,7 @@ function calculateTotalScore(board, symbol, boardSize) {
           c += dc;
         }
         
-        // Each 3+ combination gives points
+        // Каждая комбинация из 3 и более в ряд дает 1 очко, 4 в ряд - 2 очка, 5 в ряд - 3 очка и так далее
         if (count >= 3) {
           totalScore += count - 2;
         }
@@ -52,7 +52,7 @@ function calculateTotalScore(board, symbol, boardSize) {
   return totalScore;
 }
 
-// Check if any moves are available
+// Проверяем, есть ли доступные ходы
 function hasAvailableMoves(board, obstacles, boardSize) {
   for (let row = 0; row < boardSize; row++) {
     for (let col = 0; col < boardSize; col++) {
@@ -65,16 +65,16 @@ function hasAvailableMoves(board, obstacles, boardSize) {
   return false;
 }
 
-// Test database connection
+// Проверяем коннект к базе данных
 sequelize.authenticate()
   .then(() => console.log('Database connected...'))
   .catch(err => console.log('Error: ' + err));
 
-// Sync models and create default users
+// Синхронизация моделей с базой данных и создание тестовых пользователей
 sequelize.sync({ alter: true })
   .then(async () => {
     console.log('Models synced');
-    // Create default users
+    // Создаем тестовых пользователей с хешированными паролями
     const defaultPassword = 'Qazxdr777@';
     const hashedPassword = await bcrypt.hash(defaultPassword, 10);
     
@@ -93,12 +93,12 @@ sequelize.sync({ alter: true })
   })
   .catch(err => console.log('Error: ' + err));
 
-// Basic route
+// Базовый эндпоинт
 app.get('/', (req, res) => {
   res.send('Tic Tac Toe Server is running');
 });
 
-// Player routes
+// Пользовательские эндпоинты
 app.post('/register', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -127,12 +127,12 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Game routes
+// Игровые эндпоинты
 app.post('/games', async (req, res) => {
   try {
     const { player1Id, boardSize = 7, obstacleCount = 3 } = req.body;
     
-    // Generate obstacles only in inner area (edges excluded)
+    // Генерируем случайные позиции для препятствий, исключая края доски
     const obstacles = [];
     const positions = [];
     for (let i = 1; i < boardSize - 1; i++) {  // Skip edges (0 and boardSize-1)
@@ -141,7 +141,7 @@ app.post('/games', async (req, res) => {
       }
     }
     
-    // Shuffle and pick obstacleCount positions
+    // Расставляем препятствия в случайные позиции
     for (let i = positions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [positions[i], positions[j]] = [positions[j], positions[i]];
@@ -236,25 +236,25 @@ app.post('/games/:id/moves', async (req, res) => {
     const boardSize = game.boardSize || 7;
     const playerNumber = game.currentPlayer === 1 ? 1 : 2;
     
-    // Check if it's the player's turn
+    // Проверка на очередность хода
     const expectedPlayer = game.currentPlayer === 1 ? game.player1Id : game.player2Id;
     if (playerId !== expectedPlayer) {
       return res.status(400).json({ error: 'Not your turn' });
     }
     
-    // Check if cell is obstacle
+    // Проверка на препядствие
     const isObstacle = game.obstacles.some(obs => obs[0] === row && obs[1] === column);
     if (isObstacle) {
       return res.status(400).json({ error: 'Cannot place on obstacle' });
     }
     
-    // Check if cell is already taken
+    // Провнрка, что клетка не занята
     const existingMove = await Move.findOne({ where: { gameId: id, row, column } });
     if (existingMove) {
       return res.status(400).json({ error: 'Cell already taken' });
     }
     
-    // First move (X player) must be in corner
+    // Проверка первого хода: если это первый ход и игрок X, то он должен поставить в угол
     const symbol = playerNumber === 1 ? 'X' : 'O';
     const isFirstMove = game.firstMove;
     
@@ -268,27 +268,27 @@ app.post('/games/:id/moves', async (req, res) => {
       }
     }
     
-    // Get all moves to build board
+    // Строим текущее состояние доски на основе всех ходов в игре
     const allMoves = await Move.findAll({ where: { gameId: id } });
     const board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
     allMoves.forEach(move => {
       board[move.row][move.column] = move.symbol;
     });
 
-    // Create move
+    // Ход игрока
     const move = await Move.create({ gameId: id, playerId, row, column, symbol });
     
-    // Build updated board
+    // Строим доску с учетом нового хода
     board[row][column] = symbol;
 
-    // Calculate TOTAL scores for both players (unique lines only)
+    // Считаем очки для обоих игроков
     const player1Score = calculateTotalScore(board, 'X', boardSize);
     const player2Score = calculateTotalScore(board, 'O', boardSize);
 
-    // Check if game is over (no available moves)
+    // Проверяем не закончилась ли игра
     const gameOver = !hasAvailableMoves(board, game.obstacles, boardSize);
 
-    // Update game scores and check for game over
+    // Обновляем очки
     const updateData = { 
       currentPlayer: game.currentPlayer === 1 ? 2 : 1,
       firstMove: false,
@@ -307,7 +307,7 @@ app.post('/games/:id/moves', async (req, res) => {
 
     await game.update(updateData);
 
-    // Return updated game state
+    // Обновляем статус игры и возвращаем обновленную информацию о игре вместе с ходом
     const updatedGame = await Game.findByPk(id, {
       include: [
         { model: Player, as: 'player1', attributes: ['id', 'username'] },
