@@ -124,3 +124,8 @@ npm run lint
 cd client
 npm run build
 ```
+
+### Ссылки
+
+- Отчет УП.02 [REPORT_UP_02.md](REPORT_UP_02.md)
+- Отчет УП.11 [REPORT_UP_11.md](REPORT_UP_11.md)

@@ -99,7 +99,7 @@ WHERE g.status = 'active';
 
 ### ER-диаграмма
 
-![er-diag.png](er-diag.png)
+![ER-diag.png](ER-diag.png)
 
 ### Структура репозитория
 
